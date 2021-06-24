@@ -68,13 +68,11 @@ void addTodo(std::vector<todo> *t, todo n)
 // Doesn't seem to work for now
 void removeTodo(std::vector<todo> *t)
 {
-        viewList(t);
-        std::vector<todo> tRef = *t;
+	std::vector<todo> tRef = *t;
         std::cout << "Enter number to remove: ";
         int inNum;
         // Need to check for illegal input
         std::cin >> inNum;
-
         if (tRef.size() > inNum)
         {
                 tRef.erase(tRef.begin() + inNum);
@@ -172,5 +170,5 @@ void markDone(std::vector<todo> *t)
 	int index;
 	std::cin >> index;
 
-	(*t).at(index-1).done = true;
+	(*t).at(index).done = true;
 }
