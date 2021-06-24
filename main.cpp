@@ -6,8 +6,10 @@ struct todo
 {
         std::string description;
         int importance;
+	bool done;
 };
 
+void markDone(std::vector<todo> *t);
 void designNumberBox(int index);
 void addTodo(std::vector<todo> *t, todo n);
 void removeTodo(std::vector<todo> *t);
@@ -23,13 +25,22 @@ int main()
 
         for (;;)
         {
-                std::cout << "1: View List | 2: Add to List | 3: Remove from list " << std::endl;
+                std::cout << "1: View List | 2: Add to List | 3: Remove from list | 4: Mark as done | 0 Close " << std::endl;
 
                 int input;
-                std::cin >> input;
+		try
+		{
+			std::cin >> input;
+		}
+		catch (const std::exception &e)
+		{
+			return 0;
+		}
 
                 switch (input)
                 {
+		case 0:
+			return 0;
                 case 1:
                         viewList(todos_ptr);
                         break;
@@ -39,8 +50,12 @@ int main()
                 case 3:
                         removeTodo(todos_ptr);
                         break;
+		case 4:
+			markDone(todos_ptr);
+			break;
                 default:
                         std::cout << "Not accepted";
+			return 0;
                 }
         }
 }
@@ -69,6 +84,7 @@ void removeTodo(std::vector<todo> *t)
 todo getNewTodo()
 {
         todo todo_n;
+	todo_n.done = false;
 
         std::cout << "Enter description" << std::endl;
         std::cin >> todo_n.description;
@@ -103,10 +119,17 @@ void viewList(std::vector<todo> *t)
                 std::cout << " +++++++++++++++++++++++++++++++++++++++++ " << std::endl;
                 for (int i = 0; i < todos.size(); i++)
                 {
+			std::string status = "Not yet";
+			if(todos.at(i).done)
+			{
+				status = "Completed";
+			}
+
                         designNumberBox(i);
                         std::cout << "|  Importance: " << todos.at(i).importance << std::endl;
                         std::cout << "|  " << todos.at(i).description << std::endl;
-                        if (todos.size() > i + 1)
+			std::cout << "|  Done: " << status << std::endl;
+			if (todos.size() > i + 1)
                         {
                                 std::cout << "-----------------------------------------" << std::endl;
                         }
@@ -141,4 +164,13 @@ void designNumberBox(int index)
                 std::cout << "---";
         }
         std::cout << " " << std::endl;
+}
+
+void markDone(std::vector<todo> *t)
+{
+	std::cout << "Enter number of item to mark as done." << std::endl;
+	int index;
+	std::cin >> index;
+
+	(*t).at(index-1).done = true;
 }
