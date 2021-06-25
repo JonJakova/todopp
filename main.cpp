@@ -1,19 +1,4 @@
-#include <iostream>
-#include <vector>
-
-struct todo
-{
-    std::string description;
-    int importance;
-    bool done;
-};
-
-void markDone(std::vector<todo> *t);
-void designNumberBox(int index);
-void addTodo(std::vector<todo> *t, todo n);
-void removeTodo(std::vector<todo> *t);
-void viewList(std::vector<todo> *t);
-todo getNewTodo();
+#include "todo.h"
 
 int main()
 {
@@ -21,6 +6,7 @@ int main()
     std::vector<todo> *todos_ptr = &todos;
     std::string command;
     std::string inNum;
+    on_init(todos_ptr);
 
     for (;;)
     {
@@ -39,18 +25,19 @@ int main()
         switch (input)
         {
         case 0:
+            on_exit(todos_ptr);
             return 0;
         case 1:
-            viewList(todos_ptr);
+            view_list(todos_ptr);
             break;
         case 2:
-            addTodo(todos_ptr, getNewTodo());
+            add_todo(todos_ptr, get_new_todo());
             break;
         case 3:
-            removeTodo(todos_ptr);
+            remove_todo(todos_ptr);
             break;
         case 4:
-            markDone(todos_ptr);
+            mark_done(todos_ptr);
             break;
         default:
             std::cout << "Not accepted";
@@ -59,12 +46,37 @@ int main()
     }
 }
 
-void addTodo(std::vector<todo> *t, todo n)
+//todo Move file to home dir
+void on_init(std::vector<todo> *t)
+{
+    std::string file_path = ".todo.bup";
+    if (!does_file_exist(file_path))
+    {
+        return;
+    }
+    for (auto &&unmapped : read_file_content(file_path))
+    {
+        (*t).push_back(map_string_to_todo(unmapped));
+    }
+}
+
+void on_exit(std::vector<todo> *t)
+{
+    std::string file_path = ".todo.bup";
+    std::vector<std::string> mapped;
+    for (auto &&todo : (*t))
+    {
+        mapped.push_back(map_todo_to_string(todo));
+    }
+    write_all_to_file(file_path, mapped);
+}
+
+void add_todo(std::vector<todo> *t, todo n)
 {
     (*t).push_back(n);
 };
 
-void removeTodo(std::vector<todo> *t)
+void remove_todo(std::vector<todo> *t)
 {
     std::cout << "Enter number to remove: ";
     int inNum;
@@ -76,7 +88,7 @@ void removeTodo(std::vector<todo> *t)
     }
 };
 
-todo getNewTodo()
+todo get_new_todo()
 {
     todo todo_n;
     todo_n.done = false;
@@ -102,7 +114,7 @@ uImp:
     return todo_n;
 };
 
-void viewList(std::vector<todo> *t)
+void view_list(std::vector<todo> *t)
 {
     std::vector<todo> todos = *t;
     if (todos.size() == 0)
@@ -120,7 +132,7 @@ void viewList(std::vector<todo> *t)
                 status = "Completed";
             }
 
-            designNumberBox(i);
+            design_number_box(i);
             std::cout << "|  Importance: " << todos.at(i).importance << std::endl;
             std::cout << "|  " << todos.at(i).description << std::endl;
             std::cout << "|  Done: " << status << std::endl;
@@ -133,7 +145,7 @@ void viewList(std::vector<todo> *t)
     }
 };
 
-void designNumberBox(int index)
+void design_number_box(int index)
 {
     int origin = index;
     unsigned int number_of_digits = 0;
@@ -161,11 +173,42 @@ void designNumberBox(int index)
     std::cout << " " << std::endl;
 }
 
-void markDone(std::vector<todo> *t)
+void mark_done(std::vector<todo> *t)
 {
     std::cout << "Enter number of item to mark as done." << std::endl;
     int index;
     std::cin >> index;
 
     (*t).at(index).done = true;
+}
+
+//todo Preserve order
+std::string map_todo_to_string(todo &single)
+{
+    std::string content;
+    content.append(single.description);
+    content.append(";;");
+    content.append(std::to_string(single.importance));
+    content.append(";;");
+    content.append(single.done ? std::to_string(1) : std::to_string(0));
+    return content;
+}
+
+// This code here sucks (like the rest of this program but we don't talk about that)
+todo map_string_to_todo(std::string content)
+{
+    todo converted;
+    converted.description = content.substr(0, content.find(";;"));
+    content.erase(0, content.find(";;") + 2);
+    converted.importance = stoi(content.substr(0, content.find(";;")));
+    content.erase(0, content.find(";;") + 2);
+    if (!content.compare("1"))
+    {
+        converted.done = true;
+    }
+    else
+    {
+        converted.done = false;
+    }
+    return converted;
 }
