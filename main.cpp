@@ -3,7 +3,7 @@
 int main()
 {
     std::vector<todo> todos;
-    std::vector<todo> *todos_ptr = &todos;
+    std::vector<todo>* const todos_ptr = &todos;
     std::string command;
     std::string inNum;
     on_init(todos_ptr);
