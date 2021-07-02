@@ -1,4 +1,4 @@
-#ifndef PERSIST_h
+#ifndef PERSIST_H
 
 #include <iostream>
 #include <fstream>
@@ -45,4 +45,4 @@ inline std::vector<std::string> read_file_content(const std::string &file_name)
     return unformatted_todos;
 }
 
-#endif // !PERSIST_h
+#endif // !PERSIST_H
