@@ -33,14 +33,12 @@ void add_todo(std::vector<todo> *t, todo n)
 
 void remove_todo(std::vector<todo> *t)
 {
-    std::cout << "Enter number to remove: ";
-    int inNum;
-    // Need to check for illegal input
-    std::cin >> inNum;
-    if ((*t).size() > inNum)
+    int inNum = get_inputed_index("");
+    while ((*t).size() <= inNum)
     {
-        (*t).erase((*t).begin() + inNum);
+        inNum = get_inputed_index("No such task.");
     }
+    (*t).erase((*t).begin() + inNum);
 };
 
 todo get_new_todo()
@@ -130,11 +128,12 @@ void design_number_box(int index)
 
 void mark_done(std::vector<todo> *t)
 {
-    std::cout << "Enter number of item to mark as done." << std::endl;
-    int index;
-    std::cin >> index;
-
-    (*t).at(index).done = true;
+    int index_num = get_inputed_index("");
+    while ((*t).size() <= index_num)
+    {
+        index_num = get_inputed_index("No such task.");
+    }
+    (*t).at(index_num).done = !((*t).at(index_num).done);
 }
 
 //todo Preserve order
@@ -166,4 +165,33 @@ todo map_string_to_todo(std::string content)
         converted.done = false;
     }
     return converted;
+}
+
+bool try_parse_number(std::string input)
+{
+    try
+    {
+        uint32_t n = std::stoi(input);
+        return true;
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << input << " is not a number. Enter a number." << std::endl;
+        return false;
+    }
+}
+
+uint32_t get_inputed_index(std::string extra_msg)
+{
+    std::string input;
+    uint32_t input_num;
+    std::cout << extra_msg << std::endl;
+    std::cout << "Enter index: " << std::endl;
+
+    do
+    {
+        std::cin >> input;
+    } while (!try_parse_number(input));
+
+    return std::stoi(input);
 }

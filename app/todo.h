@@ -17,6 +17,8 @@ void design_number_box(int index);
 void add_todo(std::vector<todo> *t, todo n);
 void remove_todo(std::vector<todo> *t);
 void view_list(std::vector<todo> *t);
+bool try_parse_number(std::string input);
+uint32_t get_inputed_index(std::string extra_msg);
 std::string map_todo_to_string(todo &single);
 todo map_string_to_todo(std::string content);
 todo get_new_todo();

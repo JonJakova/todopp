@@ -10,7 +10,7 @@ int main()
 
     for (;;)
     {
-        std::cout << "1: View List | 2: Add to List | 3: Remove from list | 4: Mark as done | 0 Close " << std::endl;
+        std::cout << "1: View List | 2: Add to List | 3: Remove from list | 4: Mark as done/undone | 0 Close " << std::endl;
 
         int input;
         try
