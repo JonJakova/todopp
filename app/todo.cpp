@@ -11,7 +11,14 @@ void on_init(std::vector<todo> *t)
     }
     for (auto &&unmapped : read_file_content(file_path))
     {
-        (*t).push_back(map_string_to_todo(unmapped));
+        try
+        {
+            (*t).push_back(map_string_to_todo(unmapped));
+        }
+        catch (const std::exception &e)
+        {
+            std::cout << "Corrupted data `" << unmapped << "`" << std::endl;
+        }
     }
 }
 
@@ -136,7 +143,6 @@ void mark_done(std::vector<todo> *t)
     (*t).at(index_num).done = !((*t).at(index_num).done);
 }
 
-//todo Preserve order
 std::string map_todo_to_string(todo &single)
 {
     std::string content;
